@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medi Flow - Hospital Workforce Management</title>
+  <!-- Google Fonts Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <div id="login-container" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-house-laptop"></i>
+        </div>
+        <h1 class="brand-title">Medi Flow</h1>
+        <p class="brand-subtitle">Hospital Workforce Management System</p>
+      </div>
+
+      <!-- Role Selection Buttons -->
+      <div class="role-selector">
+        <button id="role-admin-btn" class="role-btn active" data-role="admin">
+          <i class="fa-solid fa-user-tie"></i> Admin
+        </button>
+        <button id="role-employee-btn" class="role-btn" data-role="employee">
+          <i class="fa-solid fa-user-md"></i> Employee
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <label for="username"><i class="fa-solid fa-user"></i> Username</label>
+          <input type="text" id="username" placeholder="Enter username..." required autocomplete="username">
+        </div>
+        <div class="input-group">
+          <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+          <input type="password" id="password" placeholder="Enter password..." required autocomplete="current-password">
+        </div>
+        <button type="submit" class="login-btn">
+          <span>Log In</span> <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+      </form>
+      <div class="login-footer">
+        <p>Demo Admin: <strong>admin</strong> / <strong>admin123</strong></p>
+        <p>Demo Employee: <strong>emp101</strong> / <strong>emp123</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN DASHBOARD ==================== -->
+  <div id="admin-dashboard-container" class="dashboard-wrapper hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-heart-pulse logo-pulse"></i>
+        <h2>Medi Flow</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" class="nav-item active" data-section="admin-dashboard"><i class="fa-solid fa-chart-line"></i> <span>Dashboard</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-employees"><i class="fa-solid fa-users"></i> <span>Employees</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-jobs"><i class="fa-solid fa-file-signature"></i> <span>Job Assignment</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-tasks"><i class="fa-solid fa-list-check"></i> <span>Task Tracking</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-analytics"><i class="fa-solid fa-chart-pie"></i> <span>Analytics</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-alerts"><i class="fa-solid fa-bell"></i> <span>Alerts</span><span class="badge badge-danger" id="admin-alert-badge">3</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-reports"><i class="fa-solid fa-file-invoice"></i> <span>Reports</span></a></li>
+          <li><a href="#" class="nav-item" data-section="admin-settings"><i class="fa-solid fa-gear"></i> <span>Settings</span></a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=120" alt="Admin Profile" class="avatar-sm">
+          <div class="user-details">
+            <h4>Dr. Richard Brand</h4>
+            <span>Director</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-content">
+      <!-- Top Navigation -->
+      <header class="top-nav">
+        <div class="header-left">
+          <button class="hamburger-menu" id="admin-hamburger"><i class="fa-solid fa-bars"></i></button>
+          <h1 id="admin-header-title">Hospital Command Center</h1>
+        </div>
+        <div class="header-right">
+          <div class="icon-actions">
+            <div class="icon-btn-container">
+              <button class="icon-btn" id="admin-nav-alerts-btn"><i class="fa-solid fa-bell"></i><span class="dot"></span></button>
+              <div class="dropdown-panel hidden" id="admin-alerts-dropdown">
+                <h3>Notifications</h3>
+                <ul id="admin-alerts-list">
+                  <!-- Generated dynamically -->
+                </ul>
+              </div>
+            </div>
+            <button class="icon-btn" id="admin-nav-settings-btn"><i class="fa-solid fa-gear"></i></button>
+            <button class="icon-btn" id="admin-nav-profile-btn">
+              <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=120" alt="Profile" class="avatar-nav">
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Sections Viewport -->
+      <main class="content-viewport">
+
+        <!-- 1. DASHBOARD SECTION -->
+        <section id="section-admin-dashboard" class="viewport-section animated-fade">
+          <div class="section-welcome">
+            <div>
+              <h2>Welcome Back, Hospital Director</h2>
+              <p>System status is normal. 4 active departments reporting.</p>
+            </div>
+            <div class="live-clock"><i class="fa-solid fa-clock"></i> <span id="admin-live-time">12:00 PM</span></div>
+          </div>
+
+          <!-- Statistics Cards Grid -->
+          <div class="stats-grid">
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Total Staff</p>
+                <h3 class="stat-value" id="stat-total-staff">0</h3>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-cyan"><i class="fa-solid fa-bed-pulse"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Total Patients</p>
+                <h3 class="stat-value" id="stat-total-patients">342</h3>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-emerald"><i class="fa-solid fa-hospital-user"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Available Beds</p>
+                <h3 class="stat-value" id="stat-available-beds">48</h3>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-purple"><i class="fa-solid fa-list-check"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Total Tasks</p>
+                <h3 class="stat-value" id="stat-total-tasks">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Column Layout: Performance & Recent Activities -->
+          <div class="dashboard-layout-2col">
+            <!-- Department Performance -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-simple"></i> Department Performance</h3>
+              </div>
+              <div class="card-content">
+                <ul class="perf-list">
+                  <li>
+                    <span class="dept-name">Cardiology</span>
+                    <div class="perf-bar-wrapper">
+                      <div class="perf-bar bar-blue" style="width: 95%;"></div>
+                    </div>
+                    <span class="perf-pct">95%</span>
+                  </li>
+                  <li>
+                    <span class="dept-name">Neurology</span>
+                    <div class="perf-bar-wrapper">
+                      <div class="perf-bar bar-cyan" style="width: 88%;"></div>
+                    </div>
+                    <span class="perf-pct">88%</span>
+                  </li>
+                  <li>
+                    <span class="dept-name">Emergency</span>
+                    <div class="perf-bar-wrapper">
+                      <div class="perf-bar bar-emerald" style="width: 97%;"></div>
+                    </div>
+                    <span class="perf-pct">97%</span>
+                  </li>
+                  <li>
+                    <span class="dept-name">ICU</span>
+                    <div class="perf-bar-wrapper">
+                      <div class="perf-bar bar-purple" style="width: 92%;"></div>
+                    </div>
+                    <span class="perf-pct">92%</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Activities</h3>
+              </div>
+              <div class="card-content">
+                <ul class="activity-timeline" id="recent-activities-list">
+                  <!-- Populated via Javascript -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. EMPLOYEES SECTION -->
+        <section id="section-admin-employees" class="viewport-section hidden animated-fade">
+          <div class="section-actions-header">
+            <h2>Employee Management Module</h2>
+            <button class="btn btn-primary" id="open-add-employee-btn"><i class="fa-solid fa-plus"></i> Add Employee</button>
+          </div>
+
+          <!-- Employee Table Card -->
+          <div class="data-card glass-card overflow-x">
+            <table class="data-table" id="employees-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employees-table-body">
+                <!-- Generated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. JOB ASSIGNMENT SECTION -->
+        <section id="section-admin-jobs" class="viewport-section hidden animated-fade">
+          <h2>Job Assignment Form</h2>
+          <div class="dashboard-layout-2col">
+            <!-- Job Assignment Form Card -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-file-medical"></i> Assign New Work</h3>
+              </div>
+              <div class="card-content">
+                <form id="job-assignment-form" class="standard-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="job-title">Job Title</label>
+                      <input type="text" id="job-title" placeholder="e.g. Ward 4B Night Shift" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="job-dept">Department</label>
+                      <select id="job-dept" required>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="ICU">ICU</option>
+                        <option value="General Medicine">General Medicine</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="job-assignee">Assign Employee</label>
+                      <select id="job-assignee" required>
+                        <!-- Updated dynamically via JS based on state.employees -->
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="job-priority">Priority</label>
+                      <select id="job-priority" required>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="job-start">Start Date</label>
+                      <input type="date" id="job-start" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="job-deadline">Deadline</label>
+                      <input type="date" id="job-deadline" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="job-description">Description</label>
+                    <textarea id="job-description" rows="3" placeholder="Provide task details..." required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-paper-plane"></i> Assign Job</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Assigned Jobs Info/Guidelines -->
+            <div class="data-card glass-card info-highlights">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-circle-info"></i> Workforce Guidelines</h3>
+              </div>
+              <div class="card-content">
+                <div class="guideline-item">
+                  <div class="icon-circle icon-blue"><i class="fa-solid fa-shield-halved"></i></div>
+                  <div>
+                    <h4>Double Check Availabilities</h4>
+                    <p>Ensure employees aren't double-booked on active critical cases before assignation.</p>
+                  </div>
+                </div>
+                <div class="guideline-item">
+                  <div class="icon-circle icon-cyan"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                  <div>
+                    <h4>Emergency Escalations</h4>
+                    <p>Tasks assigned with "High" priority trigger push alerts to the corresponding employee portal instantly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Assigned Jobs Table -->
+          <div class="data-card glass-card margin-top-lg overflow-x">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-list-check"></i> Assigned Jobs</h3>
+            </div>
+            <table class="data-table" id="assigned-jobs-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Employee</th>
+                  <th>Priority</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="assigned-jobs-table-body">
+                <!-- Generated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. TASK TRACKING SECTION (KANBAN BOARD) -->
+        <section id="section-admin-tasks" class="viewport-section hidden animated-fade">
+          <div class="section-actions-header">
+            <h2>Task Tracking Kanban Board</h2>
+            <span class="info-tag"><i class="fa-solid fa-circle-info"></i> Drag and drop cards to change status</span>
+          </div>
+
+          <!-- Kanban Board -->
+          <div class="kanban-board">
+            <!-- Pending -->
+            <div class="kanban-column" id="col-pending">
+              <div class="column-header label-pending">
+                <h3>Pending</h3>
+                <span class="count-badge" id="count-pending">0</span>
+              </div>
+              <div class="column-cards" id="cards-pending">
+                <!-- Dynamic cards -->
+              </div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="kanban-column" id="col-progress">
+              <div class="column-header label-progress">
+                <h3>In Progress</h3>
+                <span class="count-badge" id="count-progress">0</span>
+              </div>
+              <div class="column-cards" id="cards-progress">
+                <!-- Dynamic cards -->
+              </div>
+            </div>
+
+            <!-- Completed -->
+            <div class="kanban-column" id="col-completed">
+              <div class="column-header label-completed">
+                <h3>Completed</h3>
+                <span class="count-badge" id="count-completed">0</span>
+              </div>
+              <div class="column-cards" id="cards-completed">
+                <!-- Dynamic cards -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. ANALYTICS SECTION -->
+        <section id="section-admin-analytics" class="viewport-section hidden animated-fade">
+          <h2>Analytics Dashboard</h2>
+          <!-- Chart Grids -->
+          <div class="analytics-grid">
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-bar"></i> Employee Performance</h3>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-employee-performance"></canvas>
+              </div>
+            </div>
+
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-circle-nodes"></i> Department Performance</h3>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-dept-performance"></canvas>
+              </div>
+            </div>
+
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-line"></i> Task Completion Rate</h3>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-task-completion"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. ALERTS SECTION -->
+        <section id="section-admin-alerts" class="viewport-section hidden animated-fade">
+          <h2>System Alerts Center</h2>
+          
+          <div class="alerts-layout">
+            <div class="alerts-col">
+              <h3><i class="fa-solid fa-triangle-exclamation"></i> Emergency Alerts</h3>
+              <div class="alert-list-container" id="admin-emergency-alerts-list">
+                <!-- Dynamic emergency alerts -->
+              </div>
+            </div>
+
+            <div class="alerts-col">
+              <h3><i class="fa-solid fa-hourglass-half"></i> Deadline Warnings</h3>
+              <div class="alert-list-container" id="admin-deadline-alerts-list">
+                <!-- Dynamic warnings -->
+              </div>
+            </div>
+
+            <div class="alerts-col">
+              <h3><i class="fa-solid fa-bullhorn"></i> Hospital Announcements</h3>
+              <div class="alert-list-container" id="admin-announcement-alerts-list">
+                <!-- Dynamic announcements -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. REPORTS SECTION -->
+        <section id="section-admin-reports" class="viewport-section hidden animated-fade">
+          <h2>Workforce Analytics Reports</h2>
+          <div class="data-card glass-card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-file-pdf"></i> Generate System Performance Report</h3>
+            </div>
+            <div class="card-content">
+              <p>Export operational data reports in CSV format. Choose the report range below:</p>
+              
+              <div class="reports-action-grid">
+                <div class="report-box">
+                  <div class="report-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                  <h4>Daily Report</h4>
+                  <p>Includes patient metrics, staff check-ins, and active alerts from the last 24h.</p>
+                  <button class="btn btn-outline" onclick="downloadMockReport('daily')"><i class="fa-solid fa-download"></i> Daily Report</button>
+                </div>
+
+                <div class="report-box">
+                  <div class="report-icon"><i class="fa-solid fa-calendar-week"></i></div>
+                  <h4>Weekly Report</h4>
+                  <p>Aggregated department completion rates, employee utilization, and scheduling shifts.</p>
+                  <button class="btn btn-outline" onclick="downloadMockReport('weekly')"><i class="fa-solid fa-download"></i> Weekly Report</button>
+                </div>
+
+                <div class="report-box">
+                  <div class="report-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                  <h4>Monthly Report</h4>
+                  <p>Full command analytics review. Recommended for strategic board presentations.</p>
+                  <button class="btn btn-outline" onclick="downloadMockReport('monthly')"><i class="fa-solid fa-download"></i> Monthly Report</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. SETTINGS SECTION -->
+        <section id="section-admin-settings" class="viewport-section hidden animated-fade">
+          <h2>Command Settings</h2>
+          <div class="dashboard-layout-2col">
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-key"></i> Change Security Password</h3>
+              </div>
+              <div class="card-content">
+                <form id="admin-password-form" class="standard-form">
+                  <div class="form-group">
+                    <label for="admin-current-pass">Current Password</label>
+                    <input type="password" id="admin-current-pass" required placeholder="Enter current password...">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-new-pass">New Password</label>
+                    <input type="password" id="admin-new-pass" required placeholder="Enter new password...">
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fa-solid fa-shield"></i> Update Password</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-user-gear"></i> Director Profile Settings</h3>
+              </div>
+              <div class="card-content">
+                <div class="profile-summary">
+                  <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=120" alt="Director Avatar" class="profile-summary-avatar">
+                  <div class="profile-summary-meta">
+                    <h4>Dr. Richard Brand</h4>
+                    <p>Director of Workforce & Operations</p>
+                    <span class="badge badge-emerald">Active Command Session</span>
+                  </div>
+                </div>
+                <div class="settings-actions">
+                  <button class="btn btn-outline" id="admin-edit-profile-btn"><i class="fa-solid fa-user-pen"></i> Edit Profile Metadata</button>
+                  <button class="btn btn-danger btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Log Out System</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== EMPLOYEE DASHBOARD ==================== -->
+  <div id="employee-dashboard-container" class="dashboard-wrapper hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-stethoscope logo-pulse"></i>
+        <h2>Workforce</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" class="nav-item active" data-section="emp-dashboard"><i class="fa-solid fa-house-chimney-medical"></i> <span>Dashboard</span></a></li>
+          <li><a href="#" class="nav-item" data-section="emp-tasks"><i class="fa-solid fa-clipboard-list"></i> <span>My Tasks</span></a></li>
+          <li><a href="#" class="nav-item" data-section="emp-schedule"><i class="fa-solid fa-calendar-days"></i> <span>Schedule</span></a></li>
+          <li><a href="#" class="nav-item" data-section="emp-alerts"><i class="fa-solid fa-bell"></i> <span>Alerts</span><span class="badge badge-danger" id="emp-alert-badge">2</span></a></li>
+          <li><a href="#" class="nav-item" data-section="emp-progress"><i class="fa-solid fa-bars-progress"></i> <span>Progress</span></a></li>
+          <li><a href="#" class="nav-item" data-section="emp-profile"><i class="fa-solid fa-user-md"></i> <span>Profile</span></a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user" id="emp-sidebar-user">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-content">
+      <!-- Top Navigation -->
+      <header class="top-nav">
+        <div class="header-left">
+          <button class="hamburger-menu" id="emp-hamburger"><i class="fa-solid fa-bars"></i></button>
+          <h1 id="emp-header-title">Workforce Portal</h1>
+        </div>
+        <div class="header-right">
+          <div class="icon-actions">
+            <div class="icon-btn-container">
+              <button class="icon-btn" id="emp-nav-alerts-btn"><i class="fa-solid fa-bell"></i><span class="dot"></span></button>
+              <div class="dropdown-panel hidden" id="emp-alerts-dropdown">
+                <h3>Notifications</h3>
+                <ul id="emp-alerts-list">
+                  <!-- Generated dynamically -->
+                </ul>
+              </div>
+            </div>
+            <button class="icon-btn" id="emp-nav-settings-btn"><i class="fa-solid fa-gear"></i></button>
+            <button class="icon-btn" id="emp-nav-profile-btn">
+              <img src="" alt="Employee Profile" class="avatar-nav" id="emp-nav-avatar">
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Sections Viewport -->
+      <main class="content-viewport">
+
+        <!-- 1. EMPLOYEE DASHBOARD SECTION -->
+        <section id="section-emp-dashboard" class="viewport-section animated-fade">
+          <div class="section-welcome">
+            <div>
+              <h2 id="emp-welcome-name">Welcome Back, Employee Name</h2>
+              <p id="emp-welcome-dept"><i class="fa-solid fa-hospital"></i> Department Name</p>
+            </div>
+            <div class="live-clock"><i class="fa-solid fa-clock"></i> <span id="emp-live-time">12:00 PM</span></div>
+          </div>
+
+          <!-- Statistics Cards Grid -->
+          <div class="stats-grid">
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-blue"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Assigned Tasks</p>
+                <h3 class="stat-value" id="emp-stat-assigned">0</h3>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-emerald"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Completed Tasks</p>
+                <h3 class="stat-value" id="emp-stat-completed">0</h3>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon icon-amber"><i class="fa-solid fa-spinner"></i></div>
+              <div class="stat-data">
+                <p class="stat-label">Pending Tasks</p>
+                <h3 class="stat-value" id="emp-stat-pending">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Overview Task List -->
+          <div class="data-card glass-card margin-top-lg">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-star"></i> My Active Shift Priority Tasks</h3>
+            </div>
+            <div class="card-content">
+              <div class="table-responsive">
+                <table class="data-table" id="emp-dashboard-tasks-table">
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th>Priority</th>
+                      <th>Deadline</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="emp-dashboard-tasks-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. MY TASKS SECTION -->
+        <section id="section-emp-tasks" class="viewport-section hidden animated-fade">
+          <h2>Assigned Work Assignments</h2>
+          <div class="data-card glass-card overflow-x">
+            <table class="data-table" id="emp-tasks-table">
+              <thead>
+                <tr>
+                  <th>Task Title</th>
+                  <th>Priority</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="emp-tasks-table-body">
+                <!-- Generated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. SCHEDULE SECTION -->
+        <section id="section-emp-schedule" class="viewport-section hidden animated-fade">
+          <h2>My Timeline Shift Schedule</h2>
+          <div class="data-card glass-card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-calendar-check"></i> Shift Timeline - Today</h3>
+            </div>
+            <div class="card-content">
+              <div class="timeline-container" id="emp-timeline-list">
+                <!-- Hardcoded requirement:
+                  09:00 AM Ward Visit
+                  11:00 AM Patient Review
+                  02:00 PM Emergency Support
+                  05:00 PM ICU Monitoring
+                  Rendered dynamically via JS.
+                -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ALERTS SECTION -->
+        <section id="section-emp-alerts" class="viewport-section hidden animated-fade">
+          <h2>Personalized Workspace Alerts</h2>
+          <div class="alerts-layout emp-alerts-layout">
+            <div class="alert-list-container full-width-alerts" id="emp-personal-alerts-list">
+              <!-- Hardcoded requirements:
+                * Emergency Patient Assigned
+                * Deadline Approaching
+                * Staff Meeting Reminder
+              -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. PROGRESS SECTION -->
+        <section id="section-emp-progress" class="viewport-section hidden animated-fade">
+          <h2>My Performance Insights</h2>
+          <div class="dashboard-layout-2col">
+            <!-- Progress Circle/Metrics Card -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-bullseye"></i> Completion Statistics</h3>
+              </div>
+              <div class="card-content centered-content">
+                <div class="progress-radial-wrapper">
+                  <svg class="radial-svg" viewBox="0 0 100 100">
+                    <circle class="radial-bg" cx="50" cy="50" r="40"></circle>
+                    <circle class="radial-fill" id="emp-progress-ring" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2"></circle>
+                  </svg>
+                  <div class="radial-text">
+                    <h2 id="emp-progress-percent">0%</h2>
+                    <p>Done</p>
+                  </div>
+                </div>
+                <div class="progress-details-list">
+                  <div class="detail-row">
+                    <span>Completed Tasks:</span>
+                    <strong id="emp-progress-completed">0</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Pending Tasks:</span>
+                    <strong id="emp-progress-pending">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task Progression Progress Bars -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-bars-progress"></i> Shift Milestones</h3>
+              </div>
+              <div class="card-content">
+                <div class="milestone-tracker">
+                  <div class="milestone-step done">
+                    <div class="milestone-bullet"><i class="fa-solid fa-check"></i></div>
+                    <div class="milestone-meta">
+                      <h4>Duty Check-In Completed</h4>
+                      <p>Checked into ward system at 08:00 AM</p>
+                    </div>
+                  </div>
+                  <div class="milestone-step" id="milestone-tasks-step">
+                    <div class="milestone-bullet"><i class="fa-solid fa-spinner"></i></div>
+                    <div class="milestone-meta">
+                      <h4>Active Task Deliverables</h4>
+                      <p id="milestone-tasks-desc">No active tasks</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. PROFILE SECTION -->
+        <section id="section-emp-profile" class="viewport-section hidden animated-fade">
+          <h2>My Employee Profile</h2>
+          <div class="dashboard-layout-2col">
+            <!-- Details Card -->
+            <div class="data-card glass-card">
+              <div class="card-content profile-details-card">
+                <img src="" alt="Employee Pic" class="profile-lg-avatar" id="emp-profile-avatar">
+                <h3 id="emp-profile-name">Employee Name</h3>
+                <span class="badge badge-blue" id="emp-profile-position">Position</span>
+                
+                <div class="profile-info-grid">
+                  <div class="info-block">
+                    <label>Employee ID</label>
+                    <p id="emp-profile-id">EMP-000</p>
+                  </div>
+                  <div class="info-block">
+                    <label>Department</label>
+                    <p id="emp-profile-dept-name">Department Name</p>
+                  </div>
+                  <div class="info-block">
+                    <label>Contact Info</label>
+                    <p id="emp-profile-contact">example@hospital.com</p>
+                  </div>
+                </div>
+                
+                <button class="btn btn-primary" id="open-edit-profile-btn"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
+              </div>
+            </div>
+
+            <!-- Emergency Contacts & Badges -->
+            <div class="data-card glass-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-award"></i> Hospital Certifications</h3>
+              </div>
+              <div class="card-content">
+                <ul class="cert-list">
+                  <li><i class="fa-solid fa-heart-circle-check text-blue"></i> BLS Certification (Basic Life Support)</li>
+                  <li><i class="fa-solid fa-circle-chevron-up text-cyan"></i> Advanced Cardiac Life Support (ACLS)</li>
+                  <li><i class="fa-solid fa-shield-virus text-emerald"></i> Infection Prevention & Control v3</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+  
+  <!-- Add/Edit Employee Modal -->
+  <div class="modal-backdrop hidden" id="employee-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="employee-modal-title">Add New Employee</h3>
+        <button class="modal-close" id="close-employee-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="employee-form" class="standard-form">
+          <input type="hidden" id="edit-emp-index" value="">
+          <div class="form-group">
+            <label for="emp-name">Employee Name</label>
+            <input type="text" id="emp-name" placeholder="e.g. Dr. Jane Doe" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="emp-id">Employee ID</label>
+              <input type="text" id="emp-id" placeholder="e.g. EMP105" required>
+            </div>
+            <div class="form-group">
+              <label for="emp-dept">Department</label>
+              <select id="emp-dept" required>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Emergency">Emergency</option>
+                <option value="ICU">ICU</option>
+                <option value="General Medicine">General Medicine</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="emp-role">Role/Position</label>
+              <input type="text" id="emp-role" placeholder="e.g. Senior Cardiologist" required>
+            </div>
+            <div class="form-group">
+              <label for="emp-status">Initial Status</label>
+              <select id="emp-status" required>
+                <option value="Active">Active</option>
+                <option value="On Duty">On Duty</option>
+                <option value="On Leave">On Leave</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="employee-modal-submit-btn">Add Employee</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-backdrop hidden" id="edit-profile-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Edit Portal Profile</h3>
+        <button class="modal-close" id="close-profile-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-profile-form" class="standard-form">
+          <div class="form-group">
+            <label for="edit-profile-name-input">Full Name</label>
+            <input type="text" id="edit-profile-name-input" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-contact-input">Contact Info</label>
+            <input type="text" id="edit-profile-contact-input" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
